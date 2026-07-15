@@ -1,3 +1,4 @@
+import { getTwelveDataChart } from "../api/twelveData"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
@@ -99,10 +100,31 @@ export default function StockDetail() {
         setLoadingChart(true)
         setChartError("")
 
-        const historicalData = await getChart(
-          symbol,
-          selectedRange
-        )
+        let historicalData
+
+if (selectedRange === "1D") {
+  historicalData = await getTwelveDataChart(
+    symbol,
+    selectedRange
+  )
+} else {
+  historicalData = await getChart(
+    symbol,
+    selectedRange
+  )
+
+  // FMP bu sembolü desteklemiyorsa Twelve Data'ya geç.
+  if (historicalData.length === 0) {
+    console.log(
+      `FMP ${symbol} için veri vermedi. Twelve Data deneniyor.`
+    )
+
+    historicalData = await getTwelveDataChart(
+      symbol,
+      selectedRange
+    )
+  }
+}
 
         if (cancelled) {
           return
@@ -113,7 +135,7 @@ export default function StockDetail() {
         if (historicalData.length === 0) {
           if (selectedRange === "1D") {
             setChartError(
-              "1 günlük grafik verisi mevcut FMP planında kullanılamıyor olabilir."
+              "1 günlük grafik verisi Twelve Data'dan alınamadı."
             )
           } else {
             setChartError(

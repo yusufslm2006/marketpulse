@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { getMultiplePrices } from "../api/finnhub"
+import StockSearch from "../components/StockSearch"
 import type { StockQuote } from "../api/finnhub"
 
 const symbols = [
@@ -68,7 +69,7 @@ export default function Home() {
       }}
     >
       <h1>📈 MarketPulse</h1>
-
+       <StockSearch />
       <div
         style={{
           display: "grid",
